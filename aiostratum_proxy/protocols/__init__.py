@@ -2,6 +2,7 @@ import asyncio
 import binascii
 from collections import deque, OrderedDict
 import logging
+import socket
 import struct
 
 from aiojsonrpc2 import ServerProtocol, ClientProtocol
@@ -72,6 +73,25 @@ class BaseWorkerProtocol(ServerProtocol):
         self.pool_watchdog_fut = asyncio.ensure_future(self.pool_watchdog())
 
     async def loop(self, connection):
+        _socket = connection.reader._transport.get_extra_info('socket')
+
+        try:
+            if getattr(socket, 'SOL_SOCKET') and getattr(socket, 'SO_KEEPALIVE'):
+                _socket.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1) # Enable keepalive packets
+            if getattr(socket, 'SOL_TCP'):
+                if getattr(socket, 'TCP_KEEPIDLE'):
+                    # Seconds before sending keepalive probes
+                    _socket.setsockopt(socket.SOL_TCP, socket.TCP_KEEPIDLE, 60)
+                if getattr(socket, 'TCP_KEEPINTVL'):
+                    # Interval in seconds between keepalive probes
+                    _socket.setsockopt(socket.SOL_TCP, socket.TCP_KEEPINTVL, 5)
+                if getattr(socket, 'TCP_KEEPCNT'):
+                    # Failed keepalive probes before declaring other end dead
+                    _socket.setsockopt(socket.SOL_TCP, socket.TCP_KEEPCNT, 20)
+        except:
+            # Some socket features are not available on all platforms (Windows and macOS!)
+            logger.exception("{} unable to set socket keep-alive due to platform constraints".format(self.log_prefix))
+
         if not self.pool.connected or not self.pool.is_ready():
             self.recent_shares.clear()
 
