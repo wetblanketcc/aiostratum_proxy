@@ -76,16 +76,16 @@ class BaseWorkerProtocol(ServerProtocol):
         _socket = connection.reader._transport.get_extra_info('socket')
 
         try:
-            if getattr(socket, 'SOL_SOCKET') and getattr(socket, 'SO_KEEPALIVE'):
+            if hasattr(socket, 'SOL_SOCKET') and hasattr(socket, 'SO_KEEPALIVE'):
                 _socket.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1) # Enable keepalive packets
-            if getattr(socket, 'SOL_TCP'):
-                if getattr(socket, 'TCP_KEEPIDLE'):
+            if hasattr(socket, 'SOL_TCP'):
+                if hasattr(socket, 'TCP_KEEPIDLE'):
                     # Seconds before sending keepalive probes
                     _socket.setsockopt(socket.SOL_TCP, socket.TCP_KEEPIDLE, 60)
-                if getattr(socket, 'TCP_KEEPINTVL'):
+                if hasattr(socket, 'TCP_KEEPINTVL'):
                     # Interval in seconds between keepalive probes
                     _socket.setsockopt(socket.SOL_TCP, socket.TCP_KEEPINTVL, 5)
-                if getattr(socket, 'TCP_KEEPCNT'):
+                if hasattr(socket, 'TCP_KEEPCNT'):
                     # Failed keepalive probes before declaring other end dead
                     _socket.setsockopt(socket.SOL_TCP, socket.TCP_KEEPCNT, 20)
         except:
