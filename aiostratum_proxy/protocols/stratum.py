@@ -210,6 +210,7 @@ class BaseStratumPoolProtocol(BasePoolProtocol):
 
         params[0] = paccount_name
 
+        logger.debug('{} mining.submit params sent to pool {}'.format(self.log_prefix, params))
         response = await self.connection.rpc('mining.submit', params)
         return response.success and response.data
 
