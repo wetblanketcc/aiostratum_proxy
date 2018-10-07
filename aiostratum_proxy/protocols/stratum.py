@@ -18,7 +18,7 @@ class BaseStratumWorkerProtocol(BaseWorkerProtocol):
         # if self.pool.extra_nonce2_size is `None`, it's a stratum-like
         # protocol that doesn't pass it around (ie. zcash & derivatives)
         if self.pool.extra_nonce2_size is not None:
-            params.append(self.pool.extra_nonce2_size - len(extra_nonce1_tail) / 2)
+            params.append(int(self.pool.extra_nonce2_size - len(extra_nonce1_tail) / 2))
 
         return params
 
@@ -272,7 +272,7 @@ class BaseStratumPoolProtocol(BasePoolProtocol):
                     # extra_nonce2_size is only set if the coin/algo supports it
                     # (eg. zcash/zclassic do not)
                     if self.extra_nonce2_size is not None:
-                        _p[1] = self.extra_nonce2_size - len(tail) / 2
+                        _p[1] = int(self.extra_nonce2_size - len(tail) / 2)
 
                     await conn.rpc('mining.set_extranonce', _p, True)
             else:

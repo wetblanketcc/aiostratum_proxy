@@ -51,7 +51,7 @@ class EquihashPoolProtocol(BaseStratumPoolProtocol):
         ]
 
     # async def hook_extra_nonce2_size(self):
-    #     return 32 - len(self.extra_nonce1) / 2
+    #     return int(32 - len(self.extra_nonce1) / 2)
 
     async def hook_validate_job_params(self, params):
         # normally only 8 params, some pools send another bool at the end

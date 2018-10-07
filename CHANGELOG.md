@@ -1,3 +1,7 @@
+#### 1.1 2018/10/07
+
+* Nonce size calculation fix
+
 #### 1.0.2 2018/07/13
 
 * Fixing keepalive issue
